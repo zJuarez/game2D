@@ -6,19 +6,44 @@ import java.awt.Graphics;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author danieltrevino
  */
 public class Player extends Item {
-    
+
     private String direction;
     private int width;
     private int height;
     private Game game;
     private int velocity;
 
+    private Animation animationUp;
+    private Animation animationDown;
+    private Animation animationLeft;
+    private Animation animationRight;
+    private Animation animationX;
+    private Animation current;
+    
+    
+    private Animation getA(){
+        if (game.getKeyManager().up) {
+            return animationUp;
+        }
+        else if (game.getKeyManager().down) {
+            return animationDown;
+        }
+        else if (game.getKeyManager().right) {
+            return animationRight;
+        }
+        else if (game.getKeyManager().left) {
+            return animationLeft;
+        }
+        else{
+            return animationX;
+        }
+    }
+    
     public Player(int x, int y, String direction, int width, int height, Game game) {
         super(x, y, width, height);
         this.direction = direction;
@@ -26,6 +51,15 @@ public class Player extends Item {
         this.height = height;
         this.game = game;
         this.velocity = 8;
+        
+        int s = 170;
+        
+        animationRight = new Animation(Assets.playerRight, s);
+        animationLeft = new Animation(Assets.playerLeft, s);
+        animationUp = new Animation(Assets.playerUp, s);
+        animationDown = new Animation(Assets.playerDown, s);
+        animationX = new Animation(Assets.playerX, s);
+
     }
 
     public String getDirection() {
@@ -55,24 +89,38 @@ public class Player extends Item {
     @Override
     public void tick() {
 
-        if(game.getKeyManager().up){
+        if (game.getKeyManager().up) {
+            this.animationUp.tick();
             setY(getY() - velocity);
+            current = animationUp;
         }
-        if(game.getKeyManager().down){
+        else if (game.getKeyManager().down) {
+            this.animationDown.tick();
             setY(getY() + velocity);
+           current = animationDown;
+
         }
-        if(game.getKeyManager().right){
+        else if (game.getKeyManager().right) {
+            this.animationRight.tick();
             setX(getX() + velocity);
+             current = animationRight;
+
         }
-        if(game.getKeyManager().left){
+        else if (game.getKeyManager().left) {
+            this.animationLeft.tick();
             setX(getX() - velocity);
+            current = animationLeft;
         }
-                
+        else{
+            this.animationX.tick();
+            current = animationX;
+        }
+
     }
 
     @Override
     public void render(Graphics g) {
-        g.drawImage(Assets.player, getX(), getY(), getWidth(), getHeight(), null);
+        g.drawImage(current.getCurrentFrame(), getX(), getY(), getWidth(), getHeight(), null);
     }
-    
+
 }
