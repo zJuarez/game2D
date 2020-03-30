@@ -20,7 +20,7 @@ public class Assets {
      * initializing the images of the game
      */
     public static void init(){
-        background = ImageLoader.loadImage("/images/background.jpg");
+        background = ImageLoader.loadImage("/images/t.png");
         player = ImageLoader.loadImage("/images/player.png");
         drop = ImageLoader.loadImage("/images/drop.png");
     }
