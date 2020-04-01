@@ -25,7 +25,9 @@ public class Game implements Runnable {
     private int x;
     private int direction;
     private Player player;
-    private LinkedList <Enemy> enemies;          // to use an enemy
+    private LinkedList <Enemy> enemies;// to use an enemy
+    private Brick bricks[];
+    private int numberOfBricks = 30;
     private KeyManager keyManager;
     private int score;
     private int lives;
@@ -73,8 +75,21 @@ public class Game implements Runnable {
      */
     private void init(){
         display = new Display(title, getWidth(), getHeight());
+        bricks = new Brick[numberOfBricks];
         Assets.init();
-        player = new Player(50, getHeight() - 150, "right", 100, 100, this);
+        
+            int k = 0;
+
+        for (int i = 0; i < 5; i++) {
+
+            for (int j = 0; j < 6; j++) {
+
+                bricks[k] = new Brick(j * 40 + 30, i * 10 + 50, Assets.brick.getWidth(),Assets.brick.getHeight());
+                k++;
+            }
+        }
+        
+        /*player = new Player(50, getHeight() - 150, "right", 100, 100, this);
         enemies = new LinkedList();
         for(int i = 0; i <= 5; i++){
             Enemy enemy = new Enemy((int)(Math.random() * (getWidth() - 100)), 
@@ -82,7 +97,7 @@ public class Game implements Runnable {
             enemies.add(enemy);
         }
         score = 0;
-        lives = 5;
+        lives = 5;*/
         display.getJframe().addKeyListener(keyManager);
     }
 
@@ -109,6 +124,7 @@ public class Game implements Runnable {
     
     private void tick() {
         keyManager.tick();
+        /*
         if(lives > 0){
             player.tick();
             for(Enemy enemy : enemies){
@@ -131,6 +147,7 @@ public class Game implements Runnable {
                 }
             }
         }
+        */
     }
     
     private void render() {
@@ -140,6 +157,10 @@ public class Game implements Runnable {
         }else{
             g = bs.getDrawGraphics();
             g.drawImage(Assets.background, 0, 0, width, height, null);
+            for(int i=0; i<numberOfBricks; i++){
+                bricks[i].render(g);
+            }
+            /*
             if(lives > 0){
                 player.render(g);
                 for(Enemy enemy : enemies){
@@ -153,6 +174,7 @@ public class Game implements Runnable {
                 g.drawString("You lose your score: " + Integer.toString(score) 
                         + " press space to play again", 200, 100);
             }
+            */
             bs.show();
             g.dispose();
         }

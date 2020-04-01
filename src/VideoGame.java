@@ -10,7 +10,7 @@
  */
 public class VideoGame {
     public static void main(String [] args) {
-        Game g = new Game("Juego", 800, 500);
+        Game g = new Game("Juego", 300, 400);
         g.start();
     }
 }
