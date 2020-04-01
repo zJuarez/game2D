@@ -1,5 +1,6 @@
 
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Rectangle;
 
 /*
@@ -99,6 +100,14 @@ public abstract class Item {
                     i.getHeight());
             bStatus = rThis.intersects(r);
         }
+        return bStatus;
+    }
+    
+    public boolean contains(Point p){
+        boolean bStatus = false;
+        Rectangle rThis = new Rectangle(getX(), getY(), getWidth(), 
+                getHeight());
+        bStatus = rThis.contains(p);
         return bStatus;
     }
     

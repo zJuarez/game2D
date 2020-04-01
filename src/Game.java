@@ -1,5 +1,6 @@
 
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.image.BufferStrategy;
 
 /*
@@ -90,8 +91,10 @@ public class Game implements Runnable {
             }
         }
 
+        score = 0;
+        lives = 5;
         ball = new Ball(5, 5);
-        paddle = new Paddle(30, 10, this);
+        paddle = new Paddle(100, 10, this);
         display.getJframe().addKeyListener(keyManager);
     }
 
@@ -118,53 +121,111 @@ public class Game implements Runnable {
     
     private void tick() {
         keyManager.tick();
-         for(int i=0; i<numberOfBricks; i++){
+         
+        if(lives > 0){
+
+            for(int i=0; i<numberOfBricks; i++){
                 bricks[i].tick();
             }
+            
+            if(ball.getY() >= 400){
+                lives --;
+                ball.resetState();
+                paddle.resetState();
+            }
         
-        if (ball.collision(paddle)) {
+            if (ball.collision(paddle)) {
 
-            int paddleLPos = (int) paddle.getX();
-            int ballLPos = (int) ball.getX();
+                int paddleLPos = (int) paddle.getX();
+                int ballLPos = (int) ball.getX();
 
-            int first = paddleLPos + 8;
-            int second = paddleLPos + 16;
-            int third = paddleLPos + 24;
-            int fourth = paddleLPos + 32;
+                int first = paddleLPos + 8;
+                int second = paddleLPos + 16;
+                int third = paddleLPos + 24;
+                int fourth = paddleLPos + 32;
 
-            if (ballLPos < first) {
+                if (ballLPos < first) {
 
-                ball.setXDir(-1);
-                ball.setYDir(-1);
+                    ball.setXDir(-1);
+                    ball.setYDir(-1);
+                }
+
+                if (ballLPos >= first && ballLPos < second) {
+
+                    ball.setXDir(-1);
+                    ball.setYDir(-1 * ball.getYDir());
+                }
+
+                if (ballLPos >= second && ballLPos < third) {
+
+                    ball.setXDir(0);
+                    ball.setYDir(-1);
+                }
+
+                if (ballLPos >= third && ballLPos < fourth) {
+
+                    ball.setXDir(1);
+                    ball.setYDir(-1 * ball.getYDir());
+                }
+
+                if (ballLPos > fourth) {
+
+                    ball.setXDir(1);
+                    ball.setYDir(-1);
+                }
             }
 
-            if (ballLPos >= first && ballLPos < second) {
+            for(int i=0; i<numberOfBricks; i++){
+                if (ball.collision(bricks[i])) {
 
-                ball.setXDir(-1);
-                ball.setYDir(-1 * ball.getYDir());
+                    int ballLeft = (int) ball.getX();
+                    int ballHeight = (int) ball.getHeight();
+                    int ballWidth = (int) ball.getWidth();
+                    int ballTop = (int) ball.getY();
+
+                    Point pointRight = new Point(ballLeft + ballWidth + 1, ballTop);
+                    Point pointLeft = new Point(ballLeft - 1, ballTop);
+                    Point pointTop = new Point(ballLeft, ballTop - 1);
+                    Point pointBottom = new Point(ballLeft, ballTop + ballHeight + 1);
+
+                    if (!bricks[i].isDestroyed()) {
+
+                        if (bricks[i].contains(pointRight)) {
+
+                            ball.setXDir(-1);
+                        } else if (bricks[i].contains(pointLeft)) {
+
+                            ball.setXDir(1);
+                        }
+
+                        if (bricks[i].contains(pointTop)) {
+
+                            ball.setYDir(1);
+                        } else if (bricks[i].contains(pointBottom)) {
+
+                            ball.setYDir(-1);
+                        }
+
+                        bricks[i].setDestroyed(true);
+                        score += 20;
+                    }
+                }
             }
 
-            if (ballLPos >= second && ballLPos < third) {
-
-                ball.setXDir(0);
-                ball.setYDir(-1);
-            }
-
-            if (ballLPos >= third && ballLPos < fourth) {
-
-                ball.setXDir(1);
-                ball.setYDir(-1 * ball.getYDir());
-            }
-
-            if (ballLPos > fourth) {
-
-                ball.setXDir(1);
-                ball.setYDir(-1);
+            ball.tick();
+            paddle.tick();
+        
+        }else{ 
+            if(keyManager.space){
+                lives = 5;
+                score = 0;
+                ball.resetState();
+                paddle.resetState();
+                for(int i=0; i<numberOfBricks; i++){
+                    bricks[i].setDestroyed(false);
+                }
             }
         }
-        
-        ball.tick();
-        paddle.tick();
     }
     
     private void render() {
@@ -174,12 +235,19 @@ public class Game implements Runnable {
         }else{
             g = bs.getDrawGraphics();
             g.drawImage(Assets.background, 0, 0, width, height, null);
-            for(int i=0; i<numberOfBricks; i++){
-                bricks[i].render(g);
+            if(lives > 0){
+                for(int i=0; i<numberOfBricks; i++){
+                    if (!bricks[i].isDestroyed()) {
+                        bricks[i].render(g);
+                    }
+                }
+
+                ball.render(g);
+                paddle.render(g);
+            }else{
+                g.drawString("You lose your score: " + Integer.toString(score)
+                        + " press space to restart", 100, 100);
             }
-            
-            ball.render(g);
-            paddle.render(g);
             bs.show();
             g.dispose();
         }

@@ -22,51 +22,42 @@ public class Ball extends Item {
         ydir = -1;
 
         resetState();
-        
     }
     
     @Override
     public void tick() {
 
-        x += xdir*5;
-        y += ydir*5;
+        x += xdir*4;
+        y += ydir*4;
 
-        if (x == 0) {
-
+        if (x <= 0) {
             setXDir(1);
         }
 
-        if (x == 300 - width) {
-
-            System.out.println(width);
+        if (x >= 300 - width) {
             setXDir(-1);
         }
 
-        if (y == 0) {
-
+        if (y <= 0) {
             setYDir(1);
         }
 
     }
     
-    private void resetState() {
-
+    public void resetState() {
         x = 230;
         y = 355;
     }
 
     void setXDir(int x) {
-
         xdir = x;
     }
 
     void setYDir(int y) {
-
         ydir = y;
     }
 
     int getYDir() {
-
         return ydir;
     }
 

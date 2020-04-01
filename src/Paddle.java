@@ -35,9 +35,9 @@ public class Paddle extends Item {
             x = 0;
         }
 
-        if (x >= 800 - width) {
+        if (x >= 300 - width) {
 
-            x = 800 - width;
+            x = 300 - width;
         }
         
         if (game.getKeyManager().left) {
@@ -52,7 +52,7 @@ public class Paddle extends Item {
         
     }
 
-    private void resetState() {
+    public void resetState() {
         x = 200;
         y = 360;
     }

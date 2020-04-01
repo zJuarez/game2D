@@ -17,6 +17,7 @@ public class Brick extends Item{
     private int y;
     private int width;
     private int height;
+    private boolean destroyed;
     
     private Game game;
     
@@ -30,6 +31,15 @@ public class Brick extends Item{
         this.x = x;
         this.y = y;
         animation  = new Animation(Assets.brick, (int) (Math.random()*200 + 120));
+        destroyed = false;
+    }
+    
+    public boolean isDestroyed() {
+        return destroyed;
+    }
+    
+    public void setDestroyed(boolean state) {
+        destroyed = state;
     }
 
     @Override
