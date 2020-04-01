@@ -85,20 +85,11 @@ public class Game implements Runnable {
 
             for (int j = 0; j < 6; j++) {
 
-                bricks[k] = new Brick(j * 40 + 30, i * 10 + 50, Assets.brick.getWidth(),Assets.brick.getHeight());
+                bricks[k] = new Brick(j * 42 + 30, i * 11 + 50, Assets.brick[0].getWidth(),Assets.brick[0].getHeight());
                 k++;
             }
         }
-        
-        /*player = new Player(50, getHeight() - 150, "right", 100, 100, this);
-        enemies = new LinkedList();
-        for(int i = 0; i <= 5; i++){
-            Enemy enemy = new Enemy((int)(Math.random() * (getWidth() - 100)), 
-                    (int)(Math.random() * 400) - 400, 1, 100, 100, this);
-            enemies.add(enemy);
-        }
-        score = 0;
-        lives = 5;*/
+
         ball = new Ball(5, 5);
         paddle = new Paddle(30, 10, this);
         display.getJframe().addKeyListener(keyManager);
@@ -127,19 +118,9 @@ public class Game implements Runnable {
     
     private void tick() {
         keyManager.tick();
-        /*
-        if(lives > 0){
-            player.tick();
-            for(Enemy enemy : enemies){
-                enemy.tick();
-                if(player.collision(enemy)){
-                    if(player.getY() < (enemy.getY() + enemy.getHeight()) && 
-                        player.getY() > (enemy.getY() + enemy.getHeight() - 5)){
-                            score += 100;
-                            enemy.destroy();
-                    }
-                }
-        */
+         for(int i=0; i<numberOfBricks; i++){
+                bricks[i].tick();
+            }
         
         if (ball.collision(paddle)) {
 
@@ -196,21 +177,7 @@ public class Game implements Runnable {
             for(int i=0; i<numberOfBricks; i++){
                 bricks[i].render(g);
             }
-            /*
-            if(lives > 0){
-                player.render(g);
-                for(Enemy enemy : enemies){
-                    enemy.render(g);
-                }
-                g.drawString("Score: " + Integer.toString(score), getWidth()-80, 
-                        20);
-                g.drawString("Lives: " + Integer.toString(lives), getWidth()-80, 
-                        45);
-            }else{
-                g.drawString("You lose your score: " + Integer.toString(score) 
-                        + " press space to play again", 200, 100);
-            }
-            */
+            
             ball.render(g);
             paddle.render(g);
             bs.show();

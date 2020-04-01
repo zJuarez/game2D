@@ -15,7 +15,7 @@ public class Assets {
     public static BufferedImage background;
     public static BufferedImage player;
     public static BufferedImage drop;
-    public static BufferedImage brick;
+    public static BufferedImage brick[];
     public static BufferedImage sprites;
     public static BufferedImage playerUp[];
     public static BufferedImage playerDown[];
@@ -33,8 +33,24 @@ public class Assets {
         background = ImageLoader.loadImage("/images/t.png");
         player = ImageLoader.loadImage("/images/player.png");
         drop = ImageLoader.loadImage("/images/drop.png");
-        brick = ImageLoader.loadImage("images/brick.png");
-                
+        //brick = ImageLoader.loadImage("images/brick.png");
+        
+        brick = new BufferedImage[12];
+        
+       
+        brick[0] = ImageLoader.loadImage("/images/Diapositiva1.JPG");
+        brick[1] = ImageLoader.loadImage("/images/Diapositiva2.JPG");
+        brick[2] = ImageLoader.loadImage("/images/Diapositiva3.JPG");
+        brick[3] = ImageLoader.loadImage("/images/Diapositiva4.JPG");
+        brick[4] = ImageLoader.loadImage("/images/Diapositiva5.JPG");
+        brick[5] = ImageLoader.loadImage("/images/Diapositiva6.JPG");
+        brick[6] = ImageLoader.loadImage("/images/Diapositiva6.JPG");
+        brick[7] = ImageLoader.loadImage("/images/Diapositiva5.JPG");
+        brick[8] = ImageLoader.loadImage("/images/Diapositiva4.JPG");
+        brick[9] = ImageLoader.loadImage("/images/Diapositiva3.JPG");
+        brick[10] = ImageLoader.loadImage("/images/Diapositiva2.JPG");
+        brick[11] = ImageLoader.loadImage("/images/Diapositiva1.JPG");
+        
         ball = ImageLoader.loadImage("/images/ball.png");
         paddle = ImageLoader.loadImage("/images/paddle.png");
         

@@ -29,15 +29,17 @@ public class Brick extends Item{
         this.height = height;
         this.x = x;
         this.y = y;
+        animation  = new Animation(Assets.brick, (int) (Math.random()*200 + 120));
     }
 
     @Override
     public void tick() {
+        animation.tick();
     }
 
     @Override
     public void render(Graphics g) {
-        g.drawImage(Assets.brick, getX(), getY(), getWidth(), getHeight(), null);
+        g.drawImage(animation.getCurrentFrame(), getX(), getY(), getWidth(), getHeight(), null);
     }
     
 }
