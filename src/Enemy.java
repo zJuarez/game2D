@@ -46,7 +46,7 @@ public class Enemy extends Item {
         setY(getY() + velocity);
         
         if(getY() >= game.getHeight()){
-            game.objBottom();
+            //game.objBottom();
             destroy();
         }
     }

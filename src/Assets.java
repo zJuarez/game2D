@@ -22,7 +22,8 @@ public class Assets {
     public static BufferedImage playerLeft[];
     public static BufferedImage playerRight[];
     public static BufferedImage playerX[];
-    
+    public static BufferedImage ball;
+    public static BufferedImage paddle;
     
     
     /**
@@ -34,6 +35,9 @@ public class Assets {
         drop = ImageLoader.loadImage("/images/drop.png");
         brick = ImageLoader.loadImage("images/brick.png");
                 
+        ball = ImageLoader.loadImage("/images/ball.png");
+        paddle = ImageLoader.loadImage("/images/paddle.png");
+        
         playerUp = new BufferedImage[3];
         playerDown = new BufferedImage[3];
         playerLeft = new BufferedImage[3];

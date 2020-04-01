@@ -1,7 +1,6 @@
 
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
-import java.util.LinkedList;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -25,12 +24,14 @@ public class Game implements Runnable {
     private int x;
     private int direction;
     private Player player;
-    private LinkedList <Enemy> enemies;// to use an enemy
+    //private LinkedList <Enemy> enemies;// to use an enemy
     private Brick bricks[];
     private int numberOfBricks = 30;
     private KeyManager keyManager;
     private int score;
     private int lives;
+    private Ball ball;
+    private Paddle paddle;
     
     /**
      * to create title, width and height and set the game is still not running
@@ -98,6 +99,8 @@ public class Game implements Runnable {
         }
         score = 0;
         lives = 5;*/
+        ball = new Ball(5, 5);
+        paddle = new Paddle(30, 10, this);
         display.getJframe().addKeyListener(keyManager);
     }
 
@@ -136,18 +139,51 @@ public class Game implements Runnable {
                             enemy.destroy();
                     }
                 }
+        */
+        
+        if (ball.collision(paddle)) {
+
+            int paddleLPos = (int) paddle.getX();
+            int ballLPos = (int) ball.getX();
+
+            int first = paddleLPos + 8;
+            int second = paddleLPos + 16;
+            int third = paddleLPos + 24;
+            int fourth = paddleLPos + 32;
+
+            if (ballLPos < first) {
+
+                ball.setXDir(-1);
+                ball.setYDir(-1);
             }
-        }else{
-            if(keyManager.space){
-                lives = 5;
-                score = 0;
-                for(Enemy enemy : enemies){
-                    enemy.setVelocity(1);
-                    enemy.destroy();
-                }
+
+            if (ballLPos >= first && ballLPos < second) {
+
+                ball.setXDir(-1);
+                ball.setYDir(-1 * ball.getYDir());
+            }
+
+            if (ballLPos >= second && ballLPos < third) {
+
+                ball.setXDir(0);
+                ball.setYDir(-1);
+            }
+
+            if (ballLPos >= third && ballLPos < fourth) {
+
+                ball.setXDir(1);
+                ball.setYDir(-1 * ball.getYDir());
+            }
+
+            if (ballLPos > fourth) {
+
+                ball.setXDir(1);
+                ball.setYDir(-1);
             }
         }
-        */
+        
+        ball.tick();
+        paddle.tick();
     }
     
     private void render() {
@@ -175,6 +211,8 @@ public class Game implements Runnable {
                         + " press space to play again", 200, 100);
             }
             */
+            ball.render(g);
+            paddle.render(g);
             bs.show();
             g.dispose();
         }
@@ -205,11 +243,4 @@ public class Game implements Runnable {
         }
     }
 
-    void objBottom() {
-        score -= 20;
-        lives --;
-        for(Enemy enemy : enemies){
-            enemy.setVelocity(enemy.getVelocity()+1);
-        }
-    }
 }
