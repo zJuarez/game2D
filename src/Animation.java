@@ -27,6 +27,18 @@ public class Animation {
 
     }
     
+    public int getSpeed(){
+        return speed;
+    }
+    public int getLength(){
+        return frames.length;
+    }
+    public int getIndex(){
+        return index;
+    }
+    public void setIndex(int c){
+        index = c;
+    }
     public BufferedImage getCurrentFrame(){
         return frames[index];
     }

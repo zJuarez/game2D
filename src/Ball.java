@@ -16,12 +16,13 @@ public class Ball extends Item {
     private int xdir;
     private int ydir;
     
-    public Ball(int width, int height) {
-        super(230, 355, width, height);
-        xdir = 1;
-        ydir = -1;
-
-        resetState();
+    public Ball(int x1, int y1, int width, int height, int xdir1, int ydir1) {
+        super(x1, y1, width, height);
+        xdir = xdir1;
+        ydir = ydir1;
+        x=x1;
+        y=y1;
+       // resetState();
     }
     
     @Override
@@ -60,7 +61,9 @@ public class Ball extends Item {
     int getYDir() {
         return ydir;
     }
-
+    int getXDir(){
+        return xdir;
+    }
     @Override
     public void render(Graphics g) {
         g.drawImage(Assets.ball, getX(), getY(), getWidth(), getHeight(), null);
