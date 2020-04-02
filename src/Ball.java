@@ -15,20 +15,22 @@ public class Ball extends Item {
     
     private int xdir;
     private int ydir;
+    private boolean destroyed;
     
-    public Ball(int width, int height) {
+    public Ball(int width, int height, boolean destroyed) {
         super(230, 355, width, height);
         xdir = 1;
         ydir = -1;
-
+        this.destroyed = destroyed;
+        
         resetState();
     }
     
     @Override
     public void tick() {
 
-        x += xdir*4;
-        y += ydir*4;
+        x += xdir*5;
+        y += ydir*5;
 
         if (x <= 0) {
             setXDir(1);
@@ -44,9 +46,22 @@ public class Ball extends Item {
 
     }
     
+    public boolean isDestroyed() {
+        return destroyed;
+    }
+    
+    public void setDestroyed(boolean state) {
+        destroyed = state;
+    }
+    
     public void resetState() {
         x = 230;
         y = 355;
+    }
+    
+    void setPosition(int x, int y){
+        this.x = x+30;
+        this.y = y-5;
     }
 
     void setXDir(int x) {

@@ -24,7 +24,9 @@ public class Assets {
     public static BufferedImage playerX[];
     public static BufferedImage ball;
     public static BufferedImage paddle;
+    public static BufferedImage add;
     
+    public static SoundClip breakBrick;
     
     /**
      * initializing the images of the game
@@ -33,7 +35,9 @@ public class Assets {
         background = ImageLoader.loadImage("/images/t.png");
         player = ImageLoader.loadImage("/images/player.png");
         drop = ImageLoader.loadImage("/images/drop.png");
-        //brick = ImageLoader.loadImage("images/brick.png");
+        add = ImageLoader.loadImage("/images/add.png");
+        
+        breakBrick = new SoundClip("/sounds/Accept.wav");
         
         brick = new BufferedImage[12];
         

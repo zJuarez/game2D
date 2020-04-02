@@ -2,6 +2,7 @@
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferStrategy;
+import java.util.LinkedList;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -28,11 +29,15 @@ public class Game implements Runnable {
     //private LinkedList <Enemy> enemies;// to use an enemy
     private Brick bricks[];
     private int numberOfBricks = 30;
+    private int maxBalls = 3;
     private KeyManager keyManager;
     private int score;
     private int lives;
-    private Ball ball;
     private Paddle paddle;
+    private int random;
+    private LinkedList <PowerUp> powerups;
+    private Ball balls[];
+    private int numBalls;
     
     /**
      * to create title, width and height and set the game is still not running
@@ -80,7 +85,7 @@ public class Game implements Runnable {
         bricks = new Brick[numberOfBricks];
         Assets.init();
         
-            int k = 0;
+        int k = 0;
 
         for (int i = 0; i < 5; i++) {
 
@@ -93,9 +98,15 @@ public class Game implements Runnable {
 
         score = 0;
         lives = 5;
-        ball = new Ball(5, 5);
-        paddle = new Paddle(100, 10, this);
+        balls = new Ball[maxBalls];
+        for(int i = 0; i < maxBalls; i++){
+            balls[i] = new Ball(5, 5, true);
+        }
+        balls[0].setDestroyed(false);
+        numBalls = 1;
+        paddle = new Paddle(50, 10, this);
         display.getJframe().addKeyListener(keyManager);
+        powerups = new LinkedList();
     }
 
     @Override
@@ -128,101 +139,145 @@ public class Game implements Runnable {
                 bricks[i].tick();
             }
             
-            if(ball.getY() >= 400){
-                lives --;
-                ball.resetState();
-                paddle.resetState();
-            }
-        
-            if (ball.collision(paddle)) {
+            for(int j = 0; j < maxBalls; j++){
+            
+                Ball ballFor = balls[j];
+                if(!ballFor.isDestroyed()){
+                    if(ballFor.getY() >= 400){
+                        if(numBalls == 1){
+                            for(PowerUp powerup : powerups){
+                                powerup.setDestroyed(true);
+                            }
+                            lives --;
+                            ballFor.resetState();
+                            paddle.resetState();
+                            
+                        }else{
+                            ballFor.setDestroyed(true);
+                            numBalls--;
+                        }
+                    }
 
-                int paddleLPos = (int) paddle.getX();
-                int ballLPos = (int) ball.getX();
+                    if (ballFor.collision(paddle)) {
 
-                int first = paddleLPos + 8;
-                int second = paddleLPos + 16;
-                int third = paddleLPos + 24;
-                int fourth = paddleLPos + 32;
+                        int paddleLPos = (int) paddle.getX();
+                        int ballLPos = (int) ballFor.getX();
 
-                if (ballLPos < first) {
+                        int first = paddleLPos + 8;
+                        int second = paddleLPos + 16;
+                        int third = paddleLPos + 24;
+                        int fourth = paddleLPos + 32;
 
-                    ball.setXDir(-1);
-                    ball.setYDir(-1);
-                }
+                        if (ballLPos < first) {
 
-                if (ballLPos >= first && ballLPos < second) {
-
-                    ball.setXDir(-1);
-                    ball.setYDir(-1 * ball.getYDir());
-                }
-
-                if (ballLPos >= second && ballLPos < third) {
-
-                    ball.setXDir(0);
-                    ball.setYDir(-1);
-                }
-
-                if (ballLPos >= third && ballLPos < fourth) {
-
-                    ball.setXDir(1);
-                    ball.setYDir(-1 * ball.getYDir());
-                }
-
-                if (ballLPos > fourth) {
-
-                    ball.setXDir(1);
-                    ball.setYDir(-1);
-                }
-            }
-
-            for(int i=0; i<numberOfBricks; i++){
-                if (ball.collision(bricks[i])) {
-
-                    int ballLeft = (int) ball.getX();
-                    int ballHeight = (int) ball.getHeight();
-                    int ballWidth = (int) ball.getWidth();
-                    int ballTop = (int) ball.getY();
-
-                    Point pointRight = new Point(ballLeft + ballWidth + 1, ballTop);
-                    Point pointLeft = new Point(ballLeft - 1, ballTop);
-                    Point pointTop = new Point(ballLeft, ballTop - 1);
-                    Point pointBottom = new Point(ballLeft, ballTop + ballHeight + 1);
-
-                    if (!bricks[i].isDestroyed()) {
-
-                        if (bricks[i].contains(pointRight)) {
-
-                            ball.setXDir(-1);
-                        } else if (bricks[i].contains(pointLeft)) {
-
-                            ball.setXDir(1);
+                            ballFor.setXDir(-1);
+                            ballFor.setYDir(-1);
                         }
 
-                        if (bricks[i].contains(pointTop)) {
+                        if (ballLPos >= first && ballLPos < second) {
 
-                            ball.setYDir(1);
-                        } else if (bricks[i].contains(pointBottom)) {
-
-                            ball.setYDir(-1);
+                            ballFor.setXDir(-1);
+                            ballFor.setYDir(-1 * ballFor.getYDir());
                         }
 
-                        bricks[i].setDestroyed(true);
-                        score += 20;
+                        if (ballLPos >= second && ballLPos < third) {
+
+                            ballFor.setXDir(0);
+                            ballFor.setYDir(-1);
+                        }
+
+                        if (ballLPos >= third && ballLPos < fourth) {
+
+                            ballFor.setXDir(1);
+                            ballFor.setYDir(-1 * ballFor.getYDir());
+                        }
+
+                        if (ballLPos > fourth) {
+
+                            ballFor.setXDir(1);
+                            ballFor.setYDir(-1);
+                        }
+                    }
+
+                    for(int i=0; i<numberOfBricks; i++){
+                        if (ballFor.collision(bricks[i])) {
+
+                            int ballLeft = (int) ballFor.getX();
+                            int ballHeight = (int) ballFor.getHeight();
+                            int ballWidth = (int) ballFor.getWidth();
+                            int ballTop = (int) ballFor.getY();
+
+                            Point pointRight = new Point(ballLeft + ballWidth + 1, ballTop);
+                            Point pointLeft = new Point(ballLeft - 1, ballTop);
+                            Point pointTop = new Point(ballLeft, ballTop - 1);
+                            Point pointBottom = new Point(ballLeft, ballTop + ballHeight + 1);
+
+                            if (!bricks[i].isDestroyed()) {
+
+                                if (bricks[i].contains(pointRight)) {
+
+                                    ballFor.setXDir(-1);
+                                } else if (bricks[i].contains(pointLeft)) {
+
+                                    ballFor.setXDir(1);
+                                }
+
+                                if (bricks[i].contains(pointTop)) {
+
+                                    ballFor.setYDir(1);
+                                } else if (bricks[i].contains(pointBottom)) {
+
+                                    ballFor.setYDir(-1);
+                                }
+
+                                bricks[i].setDestroyed(true);
+                                score += 20;
+                                //Assets.breakBrick.play();
+                                random = (int)(Math.random() * 19) + 1;
+                                if(random != 13){
+                                    powerups.add(new PowerUp(bricks[i].getX(), 
+                                            bricks[i].getY(), 25, 25, this, false));
+                                }
+                            }
+                        }
+                    }
+                    ballFor.tick();
+                }
+            }
+            
+            for(PowerUp powerup : powerups){
+                if(!powerup.isDestroyed()){
+                    powerup.tick();
+                    if(paddle.collision(powerup)){
+                        if(numBalls < maxBalls){
+                            numBalls++;
+                            addBall(paddle.getX(), paddle.getY());
+                        }
+                        powerup.setDestroyed(true);
+                    }
+                    if(powerup.getY() >= 400){
+                        powerup.setDestroyed(true);
                     }
                 }
             }
 
-            ball.tick();
             paddle.tick();
         
         }else{ 
             if(keyManager.space){
                 lives = 5;
                 score = 0;
-                ball.resetState();
+                numBalls = 1;
+                for(int i=0; i<maxBalls; i++){
+                    balls[i].setDestroyed(true);
+                }
+                balls[0].setDestroyed(false);
                 paddle.resetState();
                 for(int i=0; i<numberOfBricks; i++){
                     bricks[i].setDestroyed(false);
+                }
+                for(PowerUp powerup : powerups){
+                    powerup.setDestroyed(true);
                 }
             }
         }
@@ -236,14 +291,27 @@ public class Game implements Runnable {
             g = bs.getDrawGraphics();
             g.drawImage(Assets.background, 0, 0, width, height, null);
             if(lives > 0){
+                g.drawString("Vidas: " + Integer.toString(lives), 240, 20);
+                g.drawString("Score: " + Integer.toString(score), 10, 20);
                 for(int i=0; i<numberOfBricks; i++){
                     if (!bricks[i].isDestroyed()) {
                         bricks[i].render(g);
                     }
                 }
-
-                ball.render(g);
+                
+                for(int j = 0; j < maxBalls; j++){
+                    if(!balls[j].isDestroyed()){
+                        balls[j].render(g);
+                    }
+                }
+                
                 paddle.render(g);
+                
+                for(PowerUp powerup : powerups){
+                    if(!powerup.isDestroyed()){
+                        powerup.render(g);
+                    }
+                }
             }else{
                 g.drawString("You lose your score: " + Integer.toString(score)
                         + " press space to restart", 100, 100);
@@ -274,6 +342,17 @@ public class Game implements Runnable {
                 thread.join();
             }catch (InterruptedException ie){
                 ie.printStackTrace();
+            }
+        }
+    }
+    
+    private void addBall(int x, int y){
+        System.out.println("si se llama");
+        for(int i = 0; i < maxBalls; i++){
+            if(balls[i].isDestroyed()){
+                balls[i].setDestroyed(false);
+                balls[i].setPosition(x, y);
+                break;
             }
         }
     }
