@@ -2,6 +2,11 @@
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferStrategy;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.LinkedList;
 
 /*
@@ -9,12 +14,12 @@ import java.util.LinkedList;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author danieltrevino
  */
 public class Game implements Runnable {
+
     private BufferStrategy bs;
     private Graphics g;
     private Display display;
@@ -35,17 +40,18 @@ public class Game implements Runnable {
     private int lives;
     private Paddle paddle;
     private int random;
-    private LinkedList <PowerUp> powerups;
+    private LinkedList<PowerUp> powerups;
     private Ball balls[];
     private int numBalls;
-    
+
     /**
      * to create title, width and height and set the game is still not running
+     *
      * @param title to set the title of the window
      * @param width to set the width of the window
-     * @param height  to set the height of the window
+     * @param height to set the height of the window
      */
-    public Game(String title, int width, int height){
+    public Game(String title, int width, int height) {
         this.title = title;
         this.width = width;
         this.height = height;
@@ -55,6 +61,7 @@ public class Game implements Runnable {
 
     /**
      * To get the width of the game window
+     *
      * @return an <code>int</code> value with the width
      */
     public int getWidth() {
@@ -63,6 +70,7 @@ public class Game implements Runnable {
 
     /**
      * To get the height of the game window
+     *
      * @return an <code>int</code> value with the height
      */
     public int getHeight() {
@@ -71,27 +79,124 @@ public class Game implements Runnable {
 
     /**
      * To get the key manager
+     *
      * @return keyManager
      */
     public KeyManager getKeyManager() {
         return keyManager;
     }
-    
+
+    public void Save(String strFileName) {
+
+        try {
+            PrintWriter writer = new PrintWriter(new FileWriter(strFileName));
+            writer.print("" + lives + "/" + score);
+
+            for (int i = 0; i < numberOfBricks; i++) {
+                writer.print("/" + bricks[i].isDestroyed());
+            }
+            
+            int numberOfPowerUps = powerups.size();
+            
+            writer.print("/" + numberOfPowerUps );
+            
+            for (PowerUp p : powerups) {
+                writer.print("/" + p.getX() + "/" + p.getY()+ "/" + p.isDestroyed());
+            }
+            
+            for(int i = 0; i<maxBalls; i++){     
+            writer.print("/" + balls[i].getX()+ "/" +balls[i].getY() + "/" +balls[i].getXDir() + "/" +balls[i].getYDir() + "/" + balls[i].isDestroyed());
+            }
+                        
+            writer.print("/" + paddle.getX() + "/" + paddle.getY());
+
+            writer.close();
+        } catch (IOException ioe) {
+            System.out.println("File Not found CALL 911");
+        }
+
+    }
+
+    public void Load(String strFileName) {
+        try {
+            FileReader file = new FileReader(strFileName);
+            BufferedReader reader = new BufferedReader(file);
+            String line;
+            String datos[];
+            line = reader.readLine();
+
+            datos = line.split("/");
+            lives = Integer.parseInt(datos[0]);
+            score = Integer.parseInt(datos[1]);
+            boolean destroyed[];
+            destroyed = new boolean[numberOfBricks];
+
+            for (int i = 2; i < 2 + numberOfBricks; i++) {
+                boolean des = Boolean.parseBoolean(datos[i]);
+                destroyed[i - 2] = des;
+            }
+
+            int k = 0;
+
+            for (int i = 0; i < 5; i++) {
+
+                for (int j = 0; j < 6; j++) {
+
+                    bricks[k] = new Brick(j * 40 + 30, i * 10 + 50,  destroyed[k]);
+                    k++;
+                }
+            }
+
+            int pos = 2 + numberOfBricks;
+            
+            int nPU = Integer.parseInt(datos[pos++]);
+            powerups = new LinkedList();
+            
+            for(int i = 0; i<nPU; i++){
+                int x = Integer.parseInt(datos[pos++]);
+                int y = Integer.parseInt(datos[pos++]);
+                boolean des = Boolean.parseBoolean(datos[pos++]);
+                powerups.add(new PowerUp(x,y,25,25,this,des));
+            }
+            
+            
+            for(int j = 0; j<maxBalls; j++){
+            int xBall = Integer.parseInt(datos[pos++]);
+            int yBall = Integer.parseInt(datos[pos++]);
+            int xDir = Integer.parseInt(datos[pos++]);
+            int yDir = Integer.parseInt(datos[pos++]);
+            boolean des = Boolean.parseBoolean(datos[pos++]);
+
+            balls[k++] = new Ball(xBall, yBall, xDir, yDir, des);
+            
+            }
+            
+            int xPaddle = Integer.parseInt(datos[pos++]);
+            int yPaddle = Integer.parseInt(datos[pos++]);
+
+            paddle = new Paddle(xPaddle, yPaddle, 50, 10, this);
+            reader.close();
+            
+        } catch (IOException e) {
+            System.out.println("File Not found CALL 911");
+        }
+    }
+
     /**
      * initializing the display window of the game
      */
-    private void init(){
+    private void init() {
         display = new Display(title, getWidth(), getHeight());
         bricks = new Brick[numberOfBricks];
         Assets.init();
-        
+
         int k = 0;
 
         for (int i = 0; i < 5; i++) {
 
             for (int j = 0; j < 6; j++) {
 
-                bricks[k] = new Brick(j * 42 + 30, i * 11 + 50, Assets.brick[0].getWidth(),Assets.brick[0].getHeight());
+                bricks[k] = new Brick(j * 40 + 30, i * 10 + 50, false);
                 k++;
             }
         }
@@ -99,12 +204,14 @@ public class Game implements Runnable {
         score = 0;
         lives = 5;
         balls = new Ball[maxBalls];
-        for(int i = 0; i < maxBalls; i++){
-            balls[i] = new Ball(5, 5, true);
+        
+        for (int i = 0; i < maxBalls; i++) {
+            balls[i] = new Ball(230,355,1,-1, true);
         }
+        
         balls[0].setDestroyed(false);
         numBalls = 1;
-        paddle = new Paddle(50, 10, this);
+        paddle = new Paddle(200,360,50, 10, this);
         display.getJframe().addKeyListener(keyManager);
         powerups = new LinkedList();
     }
@@ -117,42 +224,42 @@ public class Game implements Runnable {
         double delta = 0;
         long now;
         long lastTime = System.nanoTime();
-        while(running){
+        while (running) {
             now = System.nanoTime();
             delta += (now - lastTime) / timeTick;
             lastTime = now;
-            if(delta >= 1){
+            if (delta >= 1) {
                 tick();
                 render();
-                delta --;
+                delta--;
             }
         }
         stop();
     }
-    
+
     private void tick() {
         keyManager.tick();
-         
-        if(lives > 0){
 
-            for(int i=0; i<numberOfBricks; i++){
+        if (lives > 0) {
+
+            for (int i = 0; i < numberOfBricks; i++) {
                 bricks[i].tick();
             }
-            
-            for(int j = 0; j < maxBalls; j++){
-            
+
+            for (int j = 0; j < maxBalls; j++) {
+
                 Ball ballFor = balls[j];
-                if(!ballFor.isDestroyed()){
-                    if(ballFor.getY() >= 400){
-                        if(numBalls == 1){
-                            for(PowerUp powerup : powerups){
+                if (!ballFor.isDestroyed()) {
+                    if (ballFor.getY() >= 400) {
+                        if (numBalls == 1) {
+                            for (PowerUp powerup : powerups) {
                                 powerup.setDestroyed(true);
                             }
-                            lives --;
+                            lives--;
                             ballFor.resetState();
                             paddle.resetState();
-                            
-                        }else{
+
+                        } else {
                             ballFor.setDestroyed(true);
                             numBalls--;
                         }
@@ -199,7 +306,7 @@ public class Game implements Runnable {
                         }
                     }
 
-                    for(int i=0; i<numberOfBricks; i++){
+                    for (int i = 0; i < numberOfBricks; i++) {
                         if (ballFor.collision(bricks[i])) {
 
                             int ballLeft = (int) ballFor.getX();
@@ -233,9 +340,9 @@ public class Game implements Runnable {
                                 bricks[i].setDestroyed(true);
                                 score += 20;
                                 //Assets.breakBrick.play();
-                                random = (int)(Math.random() * 19) + 1;
-                                if(random != 13){
-                                    powerups.add(new PowerUp(bricks[i].getX(), 
+                                random = (int) (Math.random() * 19) + 1;
+                                if (random != 13) {
+                                    powerups.add(new PowerUp(bricks[i].getX(),
                                             bricks[i].getY(), 25, 25, this, false));
                                 }
                             }
@@ -244,75 +351,83 @@ public class Game implements Runnable {
                     ballFor.tick();
                 }
             }
-            
-            for(PowerUp powerup : powerups){
-                if(!powerup.isDestroyed()){
+
+            for (PowerUp powerup : powerups) {
+                if (!powerup.isDestroyed()) {
                     powerup.tick();
-                    if(paddle.collision(powerup)){
-                        if(numBalls < maxBalls){
+                    if (paddle.collision(powerup)) {
+                        if (numBalls < maxBalls) {
                             numBalls++;
                             addBall(paddle.getX(), paddle.getY());
                         }
                         powerup.setDestroyed(true);
                     }
-                    if(powerup.getY() >= 400){
+                    if (powerup.getY() >= 400) {
                         powerup.setDestroyed(true);
                     }
                 }
             }
 
             paddle.tick();
-        
-        }else{ 
-            if(keyManager.space){
+            
+               if(keyManager.s){
+                Save("archivo.txt");
+            }
+            
+            if(keyManager.l){
+                Load("archivo.txt");
+            }
+
+        } else {
+            if (keyManager.space) {
                 lives = 5;
                 score = 0;
                 numBalls = 1;
-                for(int i=0; i<maxBalls; i++){
+                for (int i = 0; i < maxBalls; i++) {
                     balls[i].setDestroyed(true);
                 }
                 balls[0].setDestroyed(false);
                 paddle.resetState();
-                for(int i=0; i<numberOfBricks; i++){
+                for (int i = 0; i < numberOfBricks; i++) {
                     bricks[i].setDestroyed(false);
                 }
-                for(PowerUp powerup : powerups){
+                for (PowerUp powerup : powerups) {
                     powerup.setDestroyed(true);
                 }
             }
         }
     }
-    
+
     private void render() {
         bs = display.getCanvas().getBufferStrategy();
-        if(bs == null){
+        if (bs == null) {
             display.getCanvas().createBufferStrategy(3);
-        }else{
+        } else {
             g = bs.getDrawGraphics();
             g.drawImage(Assets.background, 0, 0, width, height, null);
-            if(lives > 0){
+            if (lives > 0) {
                 g.drawString("Vidas: " + Integer.toString(lives), 240, 20);
                 g.drawString("Score: " + Integer.toString(score), 10, 20);
-                for(int i=0; i<numberOfBricks; i++){
+                for (int i = 0; i < numberOfBricks; i++) {
                     if (!bricks[i].isDestroyed()) {
                         bricks[i].render(g);
                     }
                 }
-                
-                for(int j = 0; j < maxBalls; j++){
-                    if(!balls[j].isDestroyed()){
+
+                for (int j = 0; j < maxBalls; j++) {
+                    if (!balls[j].isDestroyed()) {
                         balls[j].render(g);
                     }
                 }
-                
+
                 paddle.render(g);
-                
-                for(PowerUp powerup : powerups){
-                    if(!powerup.isDestroyed()){
+
+                for (PowerUp powerup : powerups) {
+                    if (!powerup.isDestroyed()) {
                         powerup.render(g);
                     }
                 }
-            }else{
+            } else {
                 g.drawString("You lose your score: " + Integer.toString(score)
                         + " press space to restart", 100, 100);
             }
@@ -320,12 +435,12 @@ public class Game implements Runnable {
             g.dispose();
         }
     }
-    
+
     /**
      * setting the thead for the game
      */
     public synchronized void start() {
-        if(!running){
+        if (!running) {
             running = true;
             thread = new Thread(this);
             thread.start();
@@ -336,20 +451,20 @@ public class Game implements Runnable {
      * stopping the thread
      */
     public synchronized void stop() {
-        if(running){
+        if (running) {
             running = false;
-            try{
+            try {
                 thread.join();
-            }catch (InterruptedException ie){
+            } catch (InterruptedException ie) {
                 ie.printStackTrace();
             }
         }
     }
-    
-    private void addBall(int x, int y){
+
+    private void addBall(int x, int y) {
         System.out.println("si se llama");
-        for(int i = 0; i < maxBalls; i++){
-            if(balls[i].isDestroyed()){
+        for (int i = 0; i < maxBalls; i++) {
+            if (balls[i].isDestroyed()) {
                 balls[i].setDestroyed(false);
                 balls[i].setPosition(x, y);
                 break;

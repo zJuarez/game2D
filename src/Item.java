@@ -103,7 +103,7 @@ public abstract class Item {
         return bStatus;
     }
     
-    public boolean contains(Point p){
+    public  boolean contains(Point p){
         boolean bStatus = false;
         Rectangle rThis = new Rectangle(getX(), getY(), getWidth(), 
                 getHeight());

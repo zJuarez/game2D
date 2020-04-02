@@ -17,11 +17,12 @@ public class Paddle extends Item {
     private int dx;
     private Game game;
 
-    public Paddle(int width, int height, Game game) {
-        super(200, 360, width, height);
+    public Paddle(int x1, int y1, int width, int height, Game game) {
+        super(x1, y1, width, height);
         this.game = game;
         
-        resetState();        
+        x = x1;
+        y = y1;
     }
 
 
