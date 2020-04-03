@@ -28,16 +28,19 @@ public class Assets {
     public static BufferedImage explosion[];
     public static BufferedImage sprit;
     
+    public static BufferedImage life;
     public static SoundClip breakBrick;
     
     /**
      * initializing the images of the game
      */
     public static void init(){
-        background = ImageLoader.loadImage("/images/t.png");
+        background = ImageLoader.loadImage("/images/black.png");
         player = ImageLoader.loadImage("/images/player.png");
         drop = ImageLoader.loadImage("/images/drop.png");
         add = ImageLoader.loadImage("/images/add.png");
+        
+        life = ImageLoader.loadImage("/images/heart.png");
         
         breakBrick = new SoundClip("/sounds/Accept.wav");
         sprit = ImageLoader.loadImage("/images/sprei.png");
@@ -51,7 +54,7 @@ public class Assets {
            brick[12-k] = ImageLoader.loadImage("/images/Diapositiva"+String.valueOf(i)+ ".JPG");
        }
     
-        ball = ImageLoader.loadImage("/images/ball.png");
+        ball = ImageLoader.loadImage("/images/ballo.png");
         paddle = ImageLoader.loadImage("/images/paddle.png");
         
         

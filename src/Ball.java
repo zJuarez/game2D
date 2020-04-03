@@ -17,7 +17,7 @@ public class Ball extends Item {
     private boolean destroyed;
 
     public Ball(int x1, int y1, int xdir1, int ydir1, boolean des) {
-        super(x1, y1, 5, 5);
+        super(x1, y1, 7, 7);
         xdir = xdir1;
         ydir = ydir1;
         x = x1;
