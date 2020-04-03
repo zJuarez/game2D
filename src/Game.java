@@ -43,6 +43,7 @@ public class Game implements Runnable {
     private LinkedList<PowerUp> powerups;
     private Ball balls[];
     private int numBalls;
+    private Animation explosion;
 
     /**
      * to create title, width and height and set the game is still not running
@@ -188,6 +189,7 @@ public class Game implements Runnable {
     private void init() {
         display = new Display(title, getWidth(), getHeight());
         bricks = new Brick[numberOfBricks];
+        //explosion = new Animation (Assets.explosion,30);
         Assets.init();
 
         int k = 0;
@@ -365,6 +367,8 @@ public class Game implements Runnable {
                     if (powerup.getY() >= 400) {
                         powerup.setDestroyed(true);
                     }
+                   // explosion.setIndex(1);
+                  //  explosion.tick();
                 }
             }
 
@@ -409,9 +413,11 @@ public class Game implements Runnable {
                 g.drawString("Vidas: " + Integer.toString(lives), 240, 20);
                 g.drawString("Score: " + Integer.toString(score), 10, 20);
                 for (int i = 0; i < numberOfBricks; i++) {
-                    if (!bricks[i].isDestroyed()) {
-                        bricks[i].render(g);
-                    }
+                        bricks[i].render(g);                 
+                }
+                 for (int i = 0; i < numberOfBricks; i++) {
+                        if(bricks[i].getTicking()==true)
+                            bricks[i].render(g);                   
                 }
 
                 for (int j = 0; j < maxBalls; j++) {

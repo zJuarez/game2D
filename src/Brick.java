@@ -20,11 +20,17 @@ public class Brick extends Item{
     
     
     private Animation animation;
+    private Animation explosion;
+    private long time;
+    boolean firstTime;
+    boolean ticking;
     
     public Brick(int x, int y, boolean des) {
         super(x, y, Assets.brick[0].getWidth(), Assets.brick[0].getHeight());
         animation  = new Animation(Assets.brick, (int) (Math.random()*200 + 120));
         destroyed = des;
+        explosion = new Animation (Assets.explosion, 12);
+        firstTime = !des;
     }
     
     public boolean isDestroyed() {
@@ -32,17 +38,39 @@ public class Brick extends Item{
     }
     
     public void setDestroyed(boolean state) {
+        if (state==false)
+            firstTime = true;
+        
         destroyed = state;
     }
 
     @Override
     public void tick() {
+        if(destroyed==false){
         animation.tick();
     }
-
-    @Override
-    public void render(Graphics g) {
-        g.drawImage(animation.getCurrentFrame(), getX(), getY(), getWidth(), getHeight(), null);
+        else{
+         explosion.tick();
+         if(firstTime==true){
+         time = System.currentTimeMillis();
+         firstTime=false;
+        }    
+       }
     }
     
+    public boolean getTicking(){
+        return ticking;
+    }
+    @Override
+    public void render(Graphics g) {
+        ticking = false;
+        
+        if(destroyed==false){
+        g.drawImage(animation.getCurrentFrame(), getX(), getY(), getWidth(), getHeight(), null);
+    }
+        else if(System.currentTimeMillis() < time + explosion.getSpeed()*explosion.getLength()){
+            ticking = true;
+            g.drawImage(explosion.getCurrentFrame(), getX()+8, getY(), 22,22, null);
+        }
+   }
 }
