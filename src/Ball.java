@@ -6,31 +6,31 @@ import java.awt.Graphics;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author danieltrevino
  */
 public class Ball extends Item {
-    
+
     private int xdir;
     private int ydir;
     private boolean destroyed;
-    
-    public Ball(int width, int height, boolean destroyed) {
-        super(230, 355, width, height);
-        xdir = 1;
-        ydir = -1;
-        this.destroyed = destroyed;
-        
-        resetState();
+
+    public Ball(int x1, int y1, int xdir1, int ydir1, boolean des) {
+        super(x1, y1, 5, 5);
+        xdir = xdir1;
+        ydir = ydir1;
+        x = x1;
+        y = y1;
+        destroyed = des;
+        // resetState();
     }
-    
+
     @Override
     public void tick() {
 
-        x += xdir*5;
-        y += ydir*5;
+        x += xdir * 5;
+        y += ydir * 5;
 
         if (x <= 0) {
             setXDir(1);
@@ -45,23 +45,23 @@ public class Ball extends Item {
         }
 
     }
-    
+
     public boolean isDestroyed() {
         return destroyed;
     }
-    
+
     public void setDestroyed(boolean state) {
         destroyed = state;
     }
-    
+
     public void resetState() {
         x = 230;
         y = 355;
     }
-    
-    void setPosition(int x, int y){
-        this.x = x+30;
-        this.y = y-5;
+
+    void setPosition(int x, int y) {
+        this.x = x + 30;
+        this.y = y - 5;
     }
 
     void setXDir(int x) {
@@ -74,6 +74,10 @@ public class Ball extends Item {
 
     int getYDir() {
         return ydir;
+    }
+
+    int getXDir() {
+        return xdir;
     }
 
     @Override

@@ -13,10 +13,7 @@ import java.awt.Graphics;
  */
 public class Brick extends Item{
     
-    private int x;
-    private int y;
-    private int width;
-    private int height;
+    
     private boolean destroyed;
     
     private Game game;
@@ -24,14 +21,10 @@ public class Brick extends Item{
     
     private Animation animation;
     
-    public Brick(int x, int y, int width, int height) {
-        super(x, y, width, height);
-        this.width = width;
-        this.height = height;
-        this.x = x;
-        this.y = y;
+    public Brick(int x, int y, boolean des) {
+        super(x, y, Assets.brick[0].getWidth(), Assets.brick[0].getHeight());
         animation  = new Animation(Assets.brick, (int) (Math.random()*200 + 120));
-        destroyed = false;
+        destroyed = des;
     }
     
     public boolean isDestroyed() {
