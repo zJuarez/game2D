@@ -151,7 +151,7 @@ public class Game implements Runnable {
             int pos = 2 + numberOfBricks;
             
             int nPU = Integer.parseInt(datos[pos++]);
-            powerups = new LinkedList();
+            powerups.clear();
             
             for(int i = 0; i<nPU; i++){
                 int x = Integer.parseInt(datos[pos++]);
@@ -168,7 +168,7 @@ public class Game implements Runnable {
             int yDir = Integer.parseInt(datos[pos++]);
             boolean des = Boolean.parseBoolean(datos[pos++]);
 
-            balls[k++] = new Ball(xBall, yBall, xDir, yDir, des);
+            balls[j] = new Ball(xBall, yBall, xDir, yDir, des);
             
             }
             
@@ -343,7 +343,7 @@ public class Game implements Runnable {
                                 score += 20;
                                 //Assets.breakBrick.play();
                                 random = (int) (Math.random() * 19) + 1;
-                                if (random != 13) {
+                                if (random !=13) {
                                     powerups.add(new PowerUp(bricks[i].getX(),
                                             bricks[i].getY(), 25, 25, this, false));
                                 }
