@@ -14,20 +14,10 @@ import java.awt.Graphics;
 public class PowerUp extends Item {
     
     private Game game;
-    private boolean destroyed;
     
-    public PowerUp(int x, int y, int width, int height, Game game, boolean destoryed) {
+    public PowerUp(int x, int y, int width, int height, Game game) {
         super(x, y, width, height);
         this.game = game;
-        this.destroyed = destroyed;
-    }
-    
-    public boolean isDestroyed() {
-        return destroyed;
-    }
-    
-    public void setDestroyed(boolean state) {
-        destroyed = state;
     }
 
     @Override

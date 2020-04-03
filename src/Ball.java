@@ -14,16 +14,13 @@ public class Ball extends Item {
 
     private int xdir;
     private int ydir;
-    private boolean destroyed;
 
-    public Ball(int x1, int y1, int xdir1, int ydir1, boolean des) {
+    public Ball(int x1, int y1, int xdir1, int ydir1) {
         super(x1, y1, 7, 7);
         xdir = xdir1;
         ydir = ydir1;
         x = x1;
         y = y1;
-        destroyed = des;
-        // resetState();
     }
 
     @Override
@@ -44,14 +41,6 @@ public class Ball extends Item {
             setYDir(1);
         }
 
-    }
-
-    public boolean isDestroyed() {
-        return destroyed;
-    }
-
-    public void setDestroyed(boolean state) {
-        destroyed = state;
     }
 
     public void resetState() {
