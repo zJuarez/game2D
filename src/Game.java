@@ -260,6 +260,7 @@ public class Game implements Runnable {
                                 powerups.remove(powerups.get(i));
                             }
                             lives--;
+                            score -= 100;
                             paddle.resetState();
                             balls.add(new Ball(230,355,1,-1));
                         }
@@ -339,7 +340,7 @@ public class Game implements Runnable {
 
                                 bricks[i].setDestroyed(true);
                                 score += 20;
-                                //Assets.breakBrick.play();
+                                Assets.breakBrick.play();
                                 random = (int) (Math.random() * 5) + 1;
                                 if (random == 3) {
                                     powerups.add(new PowerUp(bricks[i].getX(),
@@ -364,12 +365,12 @@ public class Game implements Runnable {
                 if (paddle.collision(powerup)) {
                     balls.add(new Ball(paddle.getX()+ 30,paddle.getY()-5,1,-1));
                     powerups.remove(powerup);
+                    Assets.power.play();
+                    score += 50;
                 }
                 if (powerup.getY() >= 400) {
                     powerups.remove(powerup);
                 }
-                // explosion.setIndex(1);
-                //  explosion.tick();
             }
 
             paddle.tick();

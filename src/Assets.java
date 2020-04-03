@@ -31,6 +31,7 @@ public class Assets {
     public static BufferedImage life;
     public static SoundClip breakBrick;
     public static SoundClip backmusic;
+    public static SoundClip power;
     
     /**
      * initializing the images of the game
@@ -43,8 +44,9 @@ public class Assets {
         
         life = ImageLoader.loadImage("/images/heart.png");
         
-        breakBrick = new SoundClip("/sounds/Accept.wav");
+        breakBrick = new SoundClip("/sounds/bang.wav");
         backmusic = new SoundClip("/sounds/music.wav");
+        power = new SoundClip("/sounds/cling.wav");
         sprit = ImageLoader.loadImage("/images/sprei.png");
         //brick = ImageLoader.loadImage("images/brick.png");
         
