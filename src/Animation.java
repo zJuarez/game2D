@@ -18,6 +18,11 @@ public class Animation {
     private long timer;
     private BufferedImage[] frames;
 
+    /**
+     * initializes the values for the animation
+     * @param frames the frames
+     * @param speed the speed
+     */
     public Animation(BufferedImage[] frames, int speed) {
         this.frames= frames;
         this.speed = speed;
@@ -27,22 +32,49 @@ public class Animation {
 
     }
     
+    /**
+     * get the speed of the animation
+     * @return speed
+     */
     public int getSpeed(){
         return speed;
     }
+    
+    /**
+     * get the length of the animation
+     * @return length
+     */
     public int getLength(){
         return frames.length;
     }
+    
+    /**
+     * get the index of the animation
+     * @return index
+     */
     public int getIndex(){
         return index;
     }
+    
+    /**
+     * set the index for the animation
+     * @param c 
+     */
     public void setIndex(int c){
         index = c;
     }
+    
+    /**
+     * get the current frame of the animation
+     * @return 
+     */
     public BufferedImage getCurrentFrame(){
         return frames[index];
     }
     
+    /**
+     * tick the animation
+     */
     public void tick(){
         timer+= System.currentTimeMillis()-lastTime;
         lastTime = System.currentTimeMillis();

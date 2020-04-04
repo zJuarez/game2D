@@ -30,10 +30,6 @@ public class Game implements Runnable {
     private int height;
     private Thread thread;
     private boolean running;
-    private int x;
-    private int direction;
-    private Player player;
-    //private LinkedList <Enemy> enemies;// to use an enemy
     private Brick bricks[];
     private int numberOfBricks = 30;
     private KeyManager keyManager;
@@ -43,7 +39,6 @@ public class Game implements Runnable {
     private int random;
     private LinkedList<PowerUp> powerups;
     private LinkedList<Ball> balls;
-    private Animation explosion;
     private boolean win = false;
 
     /**
@@ -88,10 +83,17 @@ public class Game implements Runnable {
         return keyManager;
     }
 
+    /**
+     * Get the variables for the current game and save them to a .txt file
+     * @param strFileName 
+     */
     public void Save(String strFileName) {
 
         try {
+            //open the document
             PrintWriter writer = new PrintWriter(new FileWriter(strFileName));
+            
+            //write to the document
             writer.print("" + lives + "/" + score);
 
             for (int i = 0; i < numberOfBricks; i++) {
@@ -115,7 +117,8 @@ public class Game implements Runnable {
             }
           
             writer.print("/" + paddle.getX() + "/" + paddle.getY());
-
+            
+            //close the document
             writer.close();
         } catch (IOException ioe) {
             System.out.println("File Not found CALL 911");
@@ -123,15 +126,22 @@ public class Game implements Runnable {
 
     }
 
+    /**
+     * Get the variables stored in the .txt file and load them into the game
+     * @param strFileName 
+     */
     public void Load(String strFileName) {
         try {
             win = false;
+            //open the document
             FileReader file = new FileReader(strFileName);
             BufferedReader reader = new BufferedReader(file);
             String line;
             String datos[];
+            //read the document
             line = reader.readLine();
 
+            //divide the data and set it to the variables
             datos = line.split("/");
             lives = Integer.parseInt(datos[0]);
             score = Integer.parseInt(datos[1]);
@@ -193,7 +203,6 @@ public class Game implements Runnable {
     private void init() {
         display = new Display(title, getWidth(), getHeight());
         bricks = new Brick[numberOfBricks];
-        //explosion = new Animation (Assets.explosion,30);
         Assets.init();
 
         Assets.backmusic.setLooping(true);
@@ -220,6 +229,9 @@ public class Game implements Runnable {
         powerups = new LinkedList();
     }
 
+    /**
+     * run the game
+     */
     @Override
     public void run() {
         init();
@@ -241,11 +253,16 @@ public class Game implements Runnable {
         stop();
     }
 
+    /**
+     * tick the game
+     */
     private void tick() {
         keyManager.tick();
 
+        // if the player hasn't lose or win
         if (lives > 0 && !win) {
 
+            //tick bricks
             for (int i = 0; i < numberOfBricks; i++) {
                 bricks[i].tick();
             }
@@ -261,114 +278,121 @@ public class Game implements Runnable {
                             }
                             lives--;
                             if(score>100)
-                            score -= 100;
+                                score -= 100;
                             paddle.resetState();
                             balls.add(new Ball(230,355,1,-1));
                         }
                     }
+                }
 
-                    if (ballFor.collision(paddle)) {
+                //handle ball collision with paddle
+                if (ballFor.collision(paddle)) {
 
-                        int paddleLPos = (int) paddle.getX();
-                        int ballLPos = (int) ballFor.getX();
+                    int paddleLPos = (int) paddle.getX();
+                    int ballLPos = (int) ballFor.getX();
 
-                        int first = paddleLPos + 8;
-                        int second = paddleLPos + 16;
-                        int third = paddleLPos + 24;
-                        int fourth = paddleLPos + 32;
+                    int first = paddleLPos + 8;
+                    int second = paddleLPos + 16;
+                    int third = paddleLPos + 24;
+                    int fourth = paddleLPos + 32;
 
-                        if (ballLPos < first) {
+                    if (ballLPos < first) {
 
-                            ballFor.setXDir(-1);
-                            ballFor.setYDir(-1);
-                        }
-
-                        if (ballLPos >= first && ballLPos < second) {
-
-                            ballFor.setXDir(-1);
-                            ballFor.setYDir(-1 * ballFor.getYDir());
-                        }
-
-                        if (ballLPos >= second && ballLPos < third) {
-
-                            ballFor.setXDir(0);
-                            ballFor.setYDir(-1);
-                        }
-
-                        if (ballLPos >= third && ballLPos < fourth) {
-
-                            ballFor.setXDir(1);
-                            ballFor.setYDir(-1 * ballFor.getYDir());
-                        }
-
-                        if (ballLPos > fourth) {
-
-                            ballFor.setXDir(1);
-                            ballFor.setYDir(-1);
-                        }
+                        ballFor.setXDir(-1);
+                        ballFor.setYDir(-1);
                     }
-                    int destroyedBricks = 0;
-                    for (int i = 0; i < numberOfBricks; i++) {
-                        if (ballFor.collision(bricks[i])) {
 
-                            int ballLeft = (int) ballFor.getX();
-                            int ballHeight = (int) ballFor.getHeight();
-                            int ballWidth = (int) ballFor.getWidth();
-                            int ballTop = (int) ballFor.getY();
+                    if (ballLPos >= first && ballLPos < second) {
 
-                            Point pointRight = new Point(ballLeft + ballWidth + 1, ballTop);
-                            Point pointLeft = new Point(ballLeft - 1, ballTop);
-                            Point pointTop = new Point(ballLeft, ballTop - 1);
-                            Point pointBottom = new Point(ballLeft, ballTop + ballHeight + 1);
+                        ballFor.setXDir(-1);
+                        ballFor.setYDir(-1 * ballFor.getYDir());
+                    }
 
-                            if (!bricks[i].isDestroyed()) {
+                    if (ballLPos >= second && ballLPos < third) {
 
-                                if (bricks[i].contains(pointRight)) {
+                        ballFor.setXDir(0);
+                        ballFor.setYDir(-1);
+                    }
 
-                                    ballFor.setXDir(-1);
-                                } else if (bricks[i].contains(pointLeft)) {
+                    if (ballLPos >= third && ballLPos < fourth) {
 
-                                    ballFor.setXDir(1);
-                                }
+                        ballFor.setXDir(1);
+                        ballFor.setYDir(-1 * ballFor.getYDir());
+                    }
 
-                                if (bricks[i].contains(pointTop)) {
+                    if (ballLPos > fourth) {
 
-                                    ballFor.setYDir(1);
-                                } else if (bricks[i].contains(pointBottom)) {
+                        ballFor.setXDir(1);
+                        ballFor.setYDir(-1);
+                    }
+                }
+                int destroyedBricks = 0;
+                //handle collsion with ball for each brick
+                for (int i = 0; i < numberOfBricks; i++) {
+                    if (ballFor.collision(bricks[i])) {
 
-                                    ballFor.setYDir(-1);
-                                }
+                        int ballLeft = (int) ballFor.getX();
+                        int ballHeight = (int) ballFor.getHeight();
+                        int ballWidth = (int) ballFor.getWidth();
+                        int ballTop = (int) ballFor.getY();
 
-                                bricks[i].setDestroyed(true);
-                                score += 20;
-                                Assets.breakBrick.play();
-                                random = (int) (Math.random() * 5) + 1;
-                                if (random == 3) {
-                                    powerups.add(new PowerUp(bricks[i].getX(),
-                                            bricks[i].getY(), 25, 25, this));
-                                }
+                        Point pointRight = new Point(ballLeft + ballWidth + 1, ballTop);
+                        Point pointLeft = new Point(ballLeft - 1, ballTop);
+                        Point pointTop = new Point(ballLeft, ballTop - 1);
+                        Point pointBottom = new Point(ballLeft, ballTop + ballHeight + 1);
+
+                        if (!bricks[i].isDestroyed()) {
+
+                            if (bricks[i].contains(pointRight)) {
+
+                                ballFor.setXDir(-1);
+                            } else if (bricks[i].contains(pointLeft)) {
+
+                                ballFor.setXDir(1);
+                            }
+
+                            if (bricks[i].contains(pointTop)) {
+
+                                ballFor.setYDir(1);
+                            } else if (bricks[i].contains(pointBottom)) {
+
+                                ballFor.setYDir(-1);
+                            }
+
+                            bricks[i].setDestroyed(true);
+                            score += 20;
+                            Assets.breakBrick.play();
+                            random = (int) (Math.random() * 5) + 1;
+                            if (random == 3) {
+                                powerups.add(new PowerUp(bricks[i].getX(),
+                                        bricks[i].getY(), 25, 25, this));
                             }
                         }
-                        if (bricks[i].isDestroyed()) {
-                            destroyedBricks++;
-                        }
                     }
-                    if (destroyedBricks == numberOfBricks) {
-                        win = true;
+                    if (bricks[i].isDestroyed()) {
+                        destroyedBricks++;
                     }
+                }
+                if (destroyedBricks == numberOfBricks) {
+                    win = true;
+                }
 
-                    ballFor.tick();
+                //tick the ball
+                ballFor.tick();
             }
 
+            //tick the powerups
             for (int i = 0; i < powerups.size();i++) {
                 PowerUp powerup = powerups.get(i);
                 powerup.tick();
+                //handle collision with paddle
                 if (paddle.collision(powerup)) {
                     balls.add(new Ball(paddle.getX()+ 30,paddle.getY()-5,1,-1));
                     powerups.remove(powerup);
                     Assets.power.play();
                     score += 50;
                 }
+                //handle when powerup reaches the bottom
                 if (powerup.getY() >= 400) {
                     powerups.remove(powerup);
                 }
@@ -385,6 +409,7 @@ public class Game implements Runnable {
             }
 
         } else {
+            //restart the game
             if (keyManager.space) {
                 win = false;
                 lives = 5;
@@ -400,6 +425,9 @@ public class Game implements Runnable {
         }
     }
 
+    /**
+     * render the game
+     */
     private void render() {
         bs = display.getCanvas().getBufferStrategy();
         if (bs == null) {
@@ -407,6 +435,7 @@ public class Game implements Runnable {
         } else {
             g = bs.getDrawGraphics();
             g.drawImage(Assets.background, 0, 0, width, height, null);
+            //if ht player is still playing
             if (lives > 0 && !win) {
                 g.setFont(new Font("Karmatic Arcade", Font.PLAIN, 9));
                 g.setColor(Color.blue);
