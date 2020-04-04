@@ -283,7 +283,6 @@ public class Game implements Runnable {
                             balls.add(new Ball(230,355,1,-1));
                         }
                     }
-                }
 
                 //handle ball collision with paddle
                 if (ballFor.collision(paddle)) {
