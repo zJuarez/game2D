@@ -90,6 +90,10 @@ public abstract class Item {
      */
     public abstract void render(Graphics g);
     
+    /* 
+       Returns true if two items collision with each other, meaning that they inersect in some x or y 
+       considering their width and height
+    */
     public boolean collision(Object o){
         boolean bStatus = false;
         if(o instanceof Item){
@@ -102,7 +106,9 @@ public abstract class Item {
         }
         return bStatus;
     }
-    
+    /*
+    Return true if the item contains a specific point p with x and y position
+    */
     public  boolean contains(Point p){
         boolean bStatus = false;
         Rectangle rThis = new Rectangle(getX(), getY(), getWidth(), 

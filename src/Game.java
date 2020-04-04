@@ -260,6 +260,7 @@ public class Game implements Runnable {
                                 powerups.remove(powerups.get(i));
                             }
                             lives--;
+                            if(score>100)
                             score -= 100;
                             paddle.resetState();
                             balls.add(new Ball(230,355,1,-1));
